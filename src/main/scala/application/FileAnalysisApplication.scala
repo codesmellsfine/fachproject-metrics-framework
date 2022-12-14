@@ -19,7 +19,7 @@ trait FileAnalysisApplication extends CsvFileOutput{
   /**
    * The logger for this instance
    */
-  protected final val log: Logger = LoggerFactory.getLogger(this.getClass)
+  override protected final val log: Logger = LoggerFactory.getLogger(this.getClass)
 
   /**
    * The CLI Parser instance to use for this application.

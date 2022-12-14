@@ -23,7 +23,7 @@ class CBOAnalysis extends SingleFileAnalysis{
     )
     //Iterating over all the methods of each class and find the classes which they access to. CBO is defined as the number of those classes which are being accessed from this class.
     project.allProjectClassFiles.foreach(c =>{
-      log.info("Calculating CBO of class: " + c.fqn)
+      // log.info("Calculating CBO of class: " + c.fqn)
       var coupledWith = Set[String]()
       c.methods.foreach( m=>{
         //         log.info("method name: " + m.name)
@@ -36,7 +36,7 @@ class CBOAnalysis extends SingleFileAnalysis{
         }
       }
       )
-      log.info("coupled with: " + coupledWith)
+      // log.info("coupled with: " + coupledWith)
       val className = c.thisType.simpleName
       resultList = MetricValue(className, this.analysisName, coupledWith.size)::resultList
     }
