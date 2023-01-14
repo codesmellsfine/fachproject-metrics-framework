@@ -3,26 +3,21 @@ package impl
 
 import org.tud.sse.metrics.analysis.SingleFileAnalysis
 import org.tud.sse.metrics.application.SingleFileAnalysisApplication
-import org.tud.sse.metrics.impl.group1.{DepthOfInheritanceTreeAnalysis, NumberOfChildrenAnalysis}
-import org.tud.sse.metrics.impl.group2.{LackOfCohesionInMethodsAnalysis, NumberOfFunctionsAnalysis}
-import org.tud.sse.metrics.impl.group3.{CBOAnalysis, LOCproAnalysis}
-import org.tud.sse.metrics.impl.group4.LOCphyAnalysis
-import org.tud.sse.metrics.impl.group5.WeightedMethodsPerClassAnalysis
+import org.tud.sse.metrics.impl.group3.LOCproAnalysis
 
 
 object SingleFileAnalysisApplication extends SingleFileAnalysisApplication {
 
   override protected val registeredAnalyses: Seq[SingleFileAnalysis] = Seq(
-    // ck-suite
-    new DepthOfInheritanceTreeAnalysis(),
-    new NumberOfChildrenAnalysis(),
-    new LackOfCohesionInMethodsAnalysis(),
-    new CBOAnalysis(),
-    new WeightedMethodsPerClassAnalysis(),
+    // ck-suite wmc, dit, noc, cbo, RFC (Response for a Class), LCOM (NOT INCLUDED!!)
+//    new DepthOfInheritanceTreeAnalysis(),
+//    new NumberOfChildrenAnalysis(),
+//    new LackOfCohesionInMethodsAnalysis(),
+//    new CBOAnalysis(),
+//    new WeightedMethodsPerClassAnalysis(),
 //    // Number of functions, Lines of Code logical physical
-    new NumberOfFunctionsAnalysis(),
-    new LOCproAnalysis(),
-    new LOCphyAnalysis()
+//    new NumberOfFunctionsAnalysis(),
+    new LOCproAnalysis()
 
 
 //    //Gruppe 1
@@ -52,7 +47,7 @@ object SingleFileAnalysisApplication extends SingleFileAnalysisApplication {
 //
 //    // Gruppe 4
 //    // Lines of Code physical
-//    new LOCphyAnalysis(),
+//    new LOCphyAnalysis()
 //    // MCCabe Cyclomatic Complexity
 //    new MCCCAnalysis(),
 //    new DACAnalysis(),

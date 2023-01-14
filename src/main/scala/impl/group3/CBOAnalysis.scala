@@ -47,5 +47,5 @@ class CBOAnalysis extends SingleFileAnalysis{
   /**
    * The name for this analysis implementation. Will be used to include and exclude analyses via CLI.
    */
-  override def analysisName: String = "metric.cbo"
+  override def analysisName: String = "Coupling between objects CBO"
 }

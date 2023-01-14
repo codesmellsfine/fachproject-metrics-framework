@@ -21,13 +21,12 @@ class NumberOfChildrenAnalysis extends ClassFileAnalysis {
    * @param customOptions custom settings for the Analysis (not needed for the NOC Metric)
    * @return iterable MetricValue for all classes
    */
-  override def analyzeClassFile(classFile: ClassFile, project: Project[URL], customOptions: OptionMap): Try[Iterable[MetricValue]] = Try{
-
-    val directChildrenCount = project.classHierarchy.directSubtypesCount(classFile.thisType)
+  override def analyzeClassFile(classFile: ClassFile, project: Project[URL], customOptions:
+                                OptionMap): Try[Iterable[MetricValue]] = Try{
+    val directChildren = project.classHierarchy.directSubtypesCount(classFile.thisType)
     val className = classFile.thisType.fqn
 
-    List(MetricValue(className,this.analysisName,directChildrenCount))
-
+    List(MetricValue(className,this.analysisName,directChildren))
   }
 
   /**

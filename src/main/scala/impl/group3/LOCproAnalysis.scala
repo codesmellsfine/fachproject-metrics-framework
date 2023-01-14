@@ -1,13 +1,12 @@
 package org.tud.sse.metrics
 package impl.group3
 
-import analysis.{MetricValue, SingleFileAnalysis}
-import input.CliParser.OptionMap
+import java.net.URL
 
 import org.opalj.br.analyses.Project
+import org.tud.sse.metrics.analysis.{MetricValue, SingleFileAnalysis}
+import org.tud.sse.metrics.input.CliParser.OptionMap
 
-import java.io.File
-import java.net.URL
 import scala.util.Try
 
 class LOCproAnalysis extends SingleFileAnalysis{

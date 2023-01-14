@@ -44,7 +44,7 @@ trait CsvFileOutput {
           metricResultCount = metricResultCount+1
         }
       }
-      log.info(s"File: ${res.jarFile}")
+      log.info(s"File: ${res.jarFile.getName}")
       log.info(s"MetricresultCount ${res.analysisName}: ${metricResultCount}")
       log.info(s"MetricResultSum ${res.analysisName}: ${metricResultSum}")
       log.info(s"Average metricresult ${res.analysisName}: ${metricResultSum/metricResultCount}")
