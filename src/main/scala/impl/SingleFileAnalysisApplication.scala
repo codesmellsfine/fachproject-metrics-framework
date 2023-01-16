@@ -3,7 +3,7 @@ package impl
 
 import org.tud.sse.metrics.analysis.SingleFileAnalysis
 import org.tud.sse.metrics.application.SingleFileAnalysisApplication
-import org.tud.sse.metrics.impl.group3.LOCproAnalysis
+import org.tud.sse.metrics.impl.group3.CBOAnalysis
 
 
 object SingleFileAnalysisApplication extends SingleFileAnalysisApplication {
@@ -13,11 +13,11 @@ object SingleFileAnalysisApplication extends SingleFileAnalysisApplication {
 //    new DepthOfInheritanceTreeAnalysis(),
 //    new NumberOfChildrenAnalysis(),
 //    new LackOfCohesionInMethodsAnalysis(),
-//    new CBOAnalysis(),
+    new CBOAnalysis()
 //    new WeightedMethodsPerClassAnalysis(),
 //    // Number of functions, Lines of Code logical physical
 //    new NumberOfFunctionsAnalysis(),
-    new LOCproAnalysis()
+     // new LOCproAnalysis()
 
 
 //    //Gruppe 1

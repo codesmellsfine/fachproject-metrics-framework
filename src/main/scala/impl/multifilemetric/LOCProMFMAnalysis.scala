@@ -1,10 +1,11 @@
-package impl.multifilemetric
+package org.tud.sse.metrics
+package impl
 
 import java.io.File
 import java.net.URL
 
 import org.opalj.br.analyses.Project
-import org.tud.sse.metrics.analysis.{MetricsResult, MultiFileAnalysis}
+import org.tud.sse.metrics.analysis.{MetricValue, MetricsResult, MultiFileAnalysis}
 import org.tud.sse.metrics.input.CliParser.OptionMap
 
 import scala.util.Try
@@ -16,6 +17,7 @@ class LOCProMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,String)]
   var initialRound: Boolean = true
   var roundCounter: Integer = 0
   var preLinesOfCodeCounter: Integer = 0
+  var linesOfCodesDifferenceBetweenVersions: Double = 0
 
   /**
    * This method is called to execute the analysis for each JAR file individually.
@@ -36,32 +38,41 @@ class LOCProMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,String)]
   }
 
   override def produceAnalysisResultForJAR(project: Project[URL], lastResult: Option[(Double, String)], customOptions: OptionMap): Try[(Double, String)] = {
+
     var lineCounter = 0
 
     project.allProjectClassFiles.foreach(
       c => {
         c.methodsWithBody.foreach(
-          m => if(m.body.exists(_.lineNumberTable.nonEmpty) || m.body.isDefined){
-            if(m.returnType!=null){
-              lineCounter = lineCounter + m.body.get.lineNumberTable.get.lineNumbers.size +1
-            } else{
-              lineCounter = lineCounter + m.body.get.lineNumberTable.get.lineNumbers.size
-            }
-          } else{
-            lineCounter = lineCounter +0
-          }
+          m =>
+            if (m.body.exists(_.lineNumberTable.nonEmpty)) {
+
+              if(m.returnType != null){
+
+                lineCounter = lineCounter + m.body.get.lineNumberTable.get.lineNumbers.size + 1
+              }
+
+              else lineCounter = lineCounter + m.body.get.lineNumberTable.get.lineNumbers.size
+
+            } else lineCounter = lineCounter + 0
         )
       }
-    )
-    if(!initialRound){
 
+    )
+
+    if(!initialRound){
+      log.info(s"lineCounter: $lineCounter, preLineCounter: $preLinesOfCodeCounter")
+      linesOfCodesDifferenceBetweenVersions = Math.abs(lineCounter-preLinesOfCodeCounter)
+      log.info(s"dif $linesOfCodesDifferenceBetweenVersions")
     }
 
     initialRound = false
     previousFile = currentFile
     preLinesOfCodeCounter = lineCounter
+    val entityIdent: String = s"LineDifference between: $previousFile and $currentFile"
+    roundCounter = roundCounter +1
 
-    Try(0.0,"")
+    Try(linesOfCodesDifferenceBetweenVersions,entityIdent)
   }
 
   /**
@@ -71,10 +82,24 @@ class LOCProMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,String)]
    *
    * @return List of JarFileMetricsResults
    */
-  override def produceMetricValues(): List[MetricsResult] = ???
+  override def produceMetricValues(): List[MetricsResult] = {
+    val difLOC = analysisResultsPerFile.values.map(_.get).
+      toList.map(value => MetricValue(value._2,"LOC-difference",value._1))
+
+    val metricResultBuffer = collection.mutable.ListBuffer[MetricsResult]()
+    val metricValueBuffer = collection.mutable.ListBuffer[MetricValue]()
+
+    metricValueBuffer.appendAll(difLOC)
+
+
+    metricResultBuffer.append(MetricsResult(analysisName,jarDir,success = true,metricValues = metricValueBuffer.toList))
+
+    metricResultBuffer.toList
+
+  }
 
   /**
    * The name for this analysis implementation. Will be used to include and exclude analyses via CLI.
    */
-  override def analysisName: String = ???
+  override def analysisName: String = "LOCDifMultiFile"
 }
