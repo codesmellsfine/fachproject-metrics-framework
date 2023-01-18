@@ -3,17 +3,17 @@ package impl
 
 import org.tud.sse.metrics.analysis.SingleFileAnalysis
 import org.tud.sse.metrics.application.SingleFileAnalysisApplication
-import org.tud.sse.metrics.impl.group3.CBOAnalysis
+import org.tud.sse.metrics.impl.group1.DepthOfInheritanceTreeAnalysis
 
 
 object SingleFileAnalysisApplication extends SingleFileAnalysisApplication {
 
   override protected val registeredAnalyses: Seq[SingleFileAnalysis] = Seq(
     // ck-suite wmc, dit, noc, cbo, RFC (Response for a Class), LCOM (NOT INCLUDED!!)
-//    new DepthOfInheritanceTreeAnalysis(),
+    new DepthOfInheritanceTreeAnalysis()
 //    new NumberOfChildrenAnalysis(),
 //    new LackOfCohesionInMethodsAnalysis(),
-    new CBOAnalysis()
+    // new CBOAnalysis()
 //    new WeightedMethodsPerClassAnalysis(),
 //    // Number of functions, Lines of Code logical physical
 //    new NumberOfFunctionsAnalysis(),
