@@ -16,7 +16,8 @@ object MultiFileAnalysisApplication extends MultiFileAnalysisApplication {
     // new CBOMFMAnalysis(jarDirectory)
     // new DITMFMAnalysis(jarDirectory)
     // new NFCMFMAnalysis(jarDirectory)
-    new NOCMFMAnalysis(jarDirectory)
+    // new NOCMFMAnalysis(jarDirectory)
+    new WMCMFMAnalysis(jarDirectory)
     //Gruppe 5
     // new InternalStabilityAnalysis(jarDirectory)
   )
