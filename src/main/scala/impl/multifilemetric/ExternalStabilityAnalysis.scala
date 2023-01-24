@@ -1,13 +1,13 @@
 package org.tud.sse.metrics
-package impl.group1
-
-import analysis.{MetricValue, MetricsResult, MultiFileAnalysis}
-import input.CliParser.OptionMap
-
-import org.opalj.br.analyses.Project
+package impl
 
 import java.io.File
 import java.net.URL
+
+import org.opalj.br.analyses.Project
+import org.tud.sse.metrics.analysis.{MetricValue, MetricsResult, MultiFileAnalysis}
+import org.tud.sse.metrics.input.CliParser.OptionMap
+
 import scala.collection.{Map, Set, SortedSet}
 import scala.util.Try
 

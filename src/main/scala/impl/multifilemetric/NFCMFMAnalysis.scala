@@ -33,7 +33,7 @@ class NFCMFMAnalysis(jarDir:File) extends MultiFileAnalysis[(Double,String)](jar
    * @return Try[T] object holding the intermediate result, if successful
    */
   override protected def produceAnalysisResultForJAR(project: Project[URL],file: File, lastResult: Option[(Double, String)], customOptions: OptionMap): Try[(Double, String)] = {
-    currentFile = file.toString
+    currentFile = file.getName
     produceAnalysisResultForJAR(project,lastResult,customOptions)
   }
 
@@ -63,9 +63,9 @@ class NFCMFMAnalysis(jarDir:File) extends MultiFileAnalysis[(Double,String)](jar
       }
     }
     initialRound = false
-    previousFile = currentFile
     preVersionAverageNFC = averageNFC
-    val entityIdent: String = s"NFCDif between: $previousFile and $currentFile"
+    val entityIdent: String = s"NFC:$previousFile:$currentFile"
+    previousFile = currentFile
     roundCounter = roundCounter +1
 
     Try(difNFCBetweenVersions,entityIdent)

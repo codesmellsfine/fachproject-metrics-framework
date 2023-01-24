@@ -37,7 +37,7 @@ class CBOMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(Double, String)](j
    * @return Try[T] object holding the intermediate result, if successful
    */
   override protected def produceAnalysisResultForJAR(project: Project[URL],file: File, lastResult: Option[(Double, String)], customOptions: OptionMap): Try[(Double, String)] = {
-    currentFile = file.toString
+    currentFile = file.getName
     produceAnalysisResultForJAR(project,lastResult,customOptions)
   }
 
@@ -85,9 +85,9 @@ class CBOMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(Double, String)](j
     }
 
     initialRound = false
-    previousFile = currentFile
     preVersionAverageCBO = averageCoupling
-    val entityIdent: String = s"CBODif between: $previousFile and $currentFile"
+    val entityIdent: String = s"CBO:$previousFile:$currentFile"
+    previousFile = currentFile
     roundCounter = roundCounter +1
 
     Try(difCBOBetweenVersions,entityIdent)

@@ -55,7 +55,7 @@ trait CsvFileOutput {
       val splitIndex = tuple._1.indexOf("$")
       val fileName = tuple._1.substring(0, splitIndex)
       val entityName = tuple._1.substring(splitIndex + 1)
-      (List(fileName, entityName) ++
+      (List(entityName) ++
         (2 until headings.length).map{ index =>
           tuple._2.get(headings(index)).map(_.toString).getOrElse("")
         }).toArray

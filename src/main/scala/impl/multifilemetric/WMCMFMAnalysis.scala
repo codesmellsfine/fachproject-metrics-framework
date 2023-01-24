@@ -34,7 +34,7 @@ class WMCMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,String)](ja
    * @return Try[T] object holding the intermediate result, if successful
    */
   override protected def produceAnalysisResultForJAR(project: Project[URL],file:File, lastResult: Option[(Double, String)], customOptions: OptionMap): Try[(Double, String)] = {
-    currentFile = file.toString
+    currentFile = file.getName
     produceAnalysisResultForJAR(project,lastResult,customOptions)
   }
 
@@ -88,9 +88,9 @@ class WMCMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,String)](ja
     }
 
     initialRound = false
-    previousFile = currentFile
     preVersionAverageWMC = averageWMC
-    val entityIdent: String = s"WMCdif between: $previousFile and $currentFile"
+    val entityIdent: String = s"WMC:$previousFile:$currentFile"
+    previousFile = currentFile
     roundCounter = roundCounter +1
 
     Try(difWMCBetweenVersions,entityIdent)
@@ -117,7 +117,6 @@ class WMCMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,String)](ja
     metricResultBuffer.append(MetricsResult(analysisName,jarDir,success = true,metricValues = metricValueBuffer.toList))
 
     metricResultBuffer.toList
-
   }
 
   /**

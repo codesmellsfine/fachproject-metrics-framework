@@ -1,16 +1,14 @@
 package org.tud.sse.metrics
-package impl.group5
-
-import analysis.{MetricValue, MetricsResult, MultiFileAnalysis}
-
-import org.opalj.br.analyses.Project
-import org.opalj.br.instructions.{INVOKESPECIAL, INVOKESTATIC, INVOKEVIRTUAL}
-import input.CliParser.OptionMap
-
-
+package impl
 
 import java.io.File
 import java.net.URL
+
+import org.opalj.br.analyses.Project
+import org.opalj.br.instructions.{INVOKESPECIAL, INVOKESTATIC, INVOKEVIRTUAL}
+import org.tud.sse.metrics.analysis.{MetricValue, MetricsResult, MultiFileAnalysis}
+import org.tud.sse.metrics.input.CliParser.OptionMap
+
 import scala.collection.Map
 import scala.collection.mutable.ListBuffer
 import scala.util.Try

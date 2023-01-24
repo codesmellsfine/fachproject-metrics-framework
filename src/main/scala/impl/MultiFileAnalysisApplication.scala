@@ -12,12 +12,14 @@ object MultiFileAnalysisApplication extends MultiFileAnalysisApplication {
     // new EvolutionAnalysis(jarDirectory)
     // new ExternalStabilityAnalysis(jarDirectory)
     // Singlefile metrics Difference between Versions
-    // new LOCProMFMAnalysis(jarDirectory)
-    // new CBOMFMAnalysis(jarDirectory)
-    // new DITMFMAnalysis(jarDirectory)
-    // new NFCMFMAnalysis(jarDirectory)
-    // new NOCMFMAnalysis(jarDirectory)
-    new WMCMFMAnalysis(jarDirectory)
+//    new LOCProMFMAnalysis(jarDirectory),
+//    new CBOMFMAnalysis(jarDirectory),
+//    new DITMFMAnalysis(jarDirectory),
+//    new NFCMFMAnalysis(jarDirectory),
+//    new NOCMFMAnalysis(jarDirectory),
+//    new WMCMFMAnalysis(jarDirectory),
+    new ExtEvolutionAnalysis(jarDirectory),
+    new IntEvolutionAnalysis(jarDirectory)
     //Gruppe 5
     // new InternalStabilityAnalysis(jarDirectory)
   )

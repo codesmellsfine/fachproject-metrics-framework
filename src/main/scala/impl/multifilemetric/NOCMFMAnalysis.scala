@@ -33,7 +33,7 @@ class NOCMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,String)](ja
    * @return Try[T] object holding the intermediate result, if successful
    */
   override protected def produceAnalysisResultForJAR(project: Project[URL],file: File, lastResult: Option[(Double, String)], customOptions: OptionMap): Try[(Double, String)] = {
-    currentFile = file.toString
+    currentFile = file.getName
     produceAnalysisResultForJAR(project,lastResult,customOptions)
   }
 
@@ -65,9 +65,9 @@ class NOCMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,String)](ja
       }
     }
     initialRound = false
-    previousFile = currentFile
     preVersionAverageNOC = averageNOC
-    val entityIdent: String = s"NOCDif between: $previousFile and $currentFile"
+    val entityIdent: String = s"NOC:$previousFile:$currentFile"
+    previousFile = currentFile
     roundCounter = roundCounter +1
 
     Try(difNOCBetweenVersions,entityIdent)

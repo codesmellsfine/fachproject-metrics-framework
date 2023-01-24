@@ -33,7 +33,7 @@ class LOCProMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,String)]
    * @return Try[T] object holding the intermediate result, if successful
    */
   override protected def produceAnalysisResultForJAR(project: Project[URL],file: File, lastResult: Option[(Double, String)], customOptions: OptionMap): Try[(Double, String)] = {
-    currentFile = file.toString
+    currentFile = file.getName
     produceAnalysisResultForJAR(project,lastResult,customOptions)
   }
 
@@ -62,14 +62,16 @@ class LOCProMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,String)]
 
     if(!initialRound){
       log.info(s"lineCounter: $lineCounter, preLineCounter: $preLinesOfCodeCounter")
-      linesOfCodesDifferenceBetweenVersions = (lineCounter-preLinesOfCodeCounter)/preLinesOfCodeCounter
+      if(preLinesOfCodeCounter>0){
+        linesOfCodesDifferenceBetweenVersions = (lineCounter-preLinesOfCodeCounter)/preLinesOfCodeCounter
+      }
       log.info(s"dif $linesOfCodesDifferenceBetweenVersions")
     }
 
     initialRound = false
-    previousFile = currentFile
     preLinesOfCodeCounter = lineCounter
-    val entityIdent: String = s"LineDifference between: $previousFile and $currentFile"
+    val entityIdent: String = s"LOC:$previousFile:$currentFile"
+    previousFile = currentFile
     roundCounter = roundCounter +1
 
     Try(linesOfCodesDifferenceBetweenVersions,entityIdent)

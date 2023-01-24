@@ -33,7 +33,7 @@ class DITMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,String)](ja
    * @return Try[T] object holding the intermediate result, if successful
    */
   override protected def produceAnalysisResultForJAR(project: Project[URL],file: File, lastResult: Option[(Double, String)], customOptions: OptionMap): Try[(Double, String)] = {
-    currentFile = file.toString
+    currentFile = file.getName
     produceAnalysisResultForJAR(project,lastResult,customOptions)
   }
 
@@ -65,9 +65,9 @@ class DITMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,String)](ja
       }
     }
     initialRound = false
-    previousFile = currentFile
     preVersionAverageDIT = averageDIT
-    val entityIdent: String = s"DITDif between: $previousFile and $currentFile"
+    val entityIdent: String = s"DIT:$previousFile:$currentFile"
+    previousFile = currentFile
     roundCounter = roundCounter +1
 
     Try(difDITBetweenVersions,entityIdent)
