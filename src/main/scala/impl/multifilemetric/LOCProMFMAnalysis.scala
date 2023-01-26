@@ -62,8 +62,10 @@ class LOCProMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(String, String,
 
     if(!initialRound){
       log.info(s"lineCounter: $lineCounter, preLineCounter: $preLinesOfCodeCounter")
-      if(preLinesOfCodeCounter>0){
+      if(preLinesOfCodeCounter!=0){
         linesOfCodesDifferenceBetweenVersions = (lineCounter-preLinesOfCodeCounter)/preLinesOfCodeCounter
+      } else{
+        linesOfCodesDifferenceBetweenVersions = 0
       }
       log.info(s"dif $linesOfCodesDifferenceBetweenVersions")
     }
