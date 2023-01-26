@@ -73,7 +73,7 @@ class ExternalStabilityAnalysis(jarDir: File) extends MultiFileAnalysis[(String,
   override def produceAnalysisResultForJAR(project: Project[URL], file: File,
                                            lastResult: Option[(String, String, Double)],
                                            customOptions: OptionMap): Try[(String, String, Double)] = {
-    currentFile = file.toString
+    currentFile = file.getName
     produceAnalysisResultForJAR(project, lastResult, customOptions)
   }
 
