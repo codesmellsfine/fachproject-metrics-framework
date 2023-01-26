@@ -10,13 +10,13 @@ import org.tud.sse.metrics.input.CliParser.OptionMap
 
 import scala.util.Try
 
-class LOCProMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,String)](jarDir){
+class LOCProMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(String, String, Double)](jarDir){
 
   var previousFile: String = ""
   var currentFile: String = ""
   var initialRound: Boolean = true
   var roundCounter: Integer = 0
-  var preLinesOfCodeCounter: Integer = 0
+  var preLinesOfCodeCounter: Double = 0
   var linesOfCodesDifferenceBetweenVersions: Double = 0
 
   /**
@@ -32,14 +32,14 @@ class LOCProMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,String)]
    *                      of the analysis via command-line
    * @return Try[T] object holding the intermediate result, if successful
    */
-  override protected def produceAnalysisResultForJAR(project: Project[URL],file: File, lastResult: Option[(Double, String)], customOptions: OptionMap): Try[(Double, String)] = {
+  override protected def produceAnalysisResultForJAR(project: Project[URL],file: File, lastResult: Option[(String, String, Double)], customOptions: OptionMap): Try[(String, String, Double)] = {
     currentFile = file.getName
     produceAnalysisResultForJAR(project,lastResult,customOptions)
   }
 
-  override def produceAnalysisResultForJAR(project: Project[URL], lastResult: Option[(Double, String)], customOptions: OptionMap): Try[(Double, String)] = {
+  override def produceAnalysisResultForJAR(project: Project[URL], lastResult: Option[(String, String, Double)], customOptions: OptionMap): Try[(String, String, Double)] = {
 
-    var lineCounter = 0
+    var lineCounter = 0.0
 
     project.allProjectClassFiles.foreach(
       c => {
@@ -71,10 +71,11 @@ class LOCProMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,String)]
     initialRound = false
     preLinesOfCodeCounter = lineCounter
     val entityIdent: String = s"LOC:$previousFile:$currentFile"
+    val prevFileTmp = previousFile
     previousFile = currentFile
     roundCounter = roundCounter +1
 
-    Try(linesOfCodesDifferenceBetweenVersions,entityIdent)
+    Try(prevFileTmp,currentFile,linesOfCodesDifferenceBetweenVersions)
   }
 
   /**
@@ -86,7 +87,7 @@ class LOCProMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,String)]
    */
   override def produceMetricValues(): List[MetricsResult] = {
     val difLOC = analysisResultsPerFile.values.map(_.get).
-      toList.map(value => MetricValue(value._2,"LOC-difference",value._1))
+      toList.map(value => MetricValue(value._1,value._2,analysisName,value._3))
 
     val metricResultBuffer = collection.mutable.ListBuffer[MetricsResult]()
     val metricValueBuffer = collection.mutable.ListBuffer[MetricValue]()
@@ -103,5 +104,5 @@ class LOCProMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,String)]
   /**
    * The name for this analysis implementation. Will be used to include and exclude analyses via CLI.
    */
-  override def analysisName: String = "LOCDifMultiFile"
+  override def analysisName: String = "LOC"
 }

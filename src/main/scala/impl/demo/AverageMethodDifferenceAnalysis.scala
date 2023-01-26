@@ -22,7 +22,7 @@ class AverageMethodDifferenceAnalysis(jarDir: File) extends MultiFileAnalysis[Lo
 
     val allNewMethodCounts = analysisResultsPerFile.values.map(_.get).sum
     val averageNewMethodCount = allNewMethodCounts.toDouble / analysisResultsPerFile.size
-    val averageNewMethodMetric = MetricValue("file", "newmethodcount.average", averageNewMethodCount)
+    val averageNewMethodMetric = MetricValue("file", "newmethodcount.average","", averageNewMethodCount)
 
     List(MetricsResult(analysisName, jarDir, success = true, List(averageNewMethodMetric)))
   }

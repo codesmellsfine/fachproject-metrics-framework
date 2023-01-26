@@ -27,10 +27,10 @@ object MetricsResult {
 
 /**
  *
- * @param entityIdent Entity this metric was calculate for. May be the entire file, a single method or any other entity.
+ * @param previousVersion Entity this metric was calculate for. May be the entire file, a single method or any other entity.
  * @param metricName Name of the metric that was calculated here
  * @param metricValue Value calculated for this entity
  */
-case class MetricValue(entityIdent: String, metricName: String, metricValue: Double)
+case class MetricValue(previousVersion: String,currentVersion: String, metricName: String, metricValue: Double)
 
 

@@ -15,7 +15,7 @@ class MethodSizeAnalysis extends MethodAnalysis{
     if(project.isProjectType(method.classFile.thisType)){
       method.body.map(c => c.codeSize) match {
         case Some(codeSize) =>
-          List(MetricValue(method.fullyQualifiedSignature, this.analysisName, codeSize))
+          List(MetricValue(method.fullyQualifiedSignature, this.analysisName,"", codeSize))
         case None =>
           List.empty
       }

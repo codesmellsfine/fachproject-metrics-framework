@@ -10,7 +10,7 @@ import org.tud.sse.metrics.input.CliParser.OptionMap
 
 import scala.util.Try
 
-class NFCMFMAnalysis(jarDir:File) extends MultiFileAnalysis[(Double,String)](jarDir) {
+class NFCMFMAnalysis(jarDir:File) extends MultiFileAnalysis[(String, String, Double)](jarDir) {
 
   var previousFile: String = ""
   var currentFile: String = ""
@@ -32,17 +32,17 @@ class NFCMFMAnalysis(jarDir:File) extends MultiFileAnalysis[(Double,String)](jar
    *                      of the analysis via command-line
    * @return Try[T] object holding the intermediate result, if successful
    */
-  override protected def produceAnalysisResultForJAR(project: Project[URL],file: File, lastResult: Option[(Double, String)], customOptions: OptionMap): Try[(Double, String)] = {
+  override protected def produceAnalysisResultForJAR(project: Project[URL],file: File, lastResult: Option[(String, String, Double)], customOptions: OptionMap): Try[(String, String, Double)] = {
     currentFile = file.getName
     produceAnalysisResultForJAR(project,lastResult,customOptions)
   }
 
-  override def produceAnalysisResultForJAR(project: Project[URL], lastResult: Option[(Double, String)], customOptions: OptionMap): Try[(Double, String)] = {
+  override def produceAnalysisResultForJAR(project: Project[URL], lastResult: Option[(String, String, Double)], customOptions: OptionMap): Try[(String, String, Double)] = {
 
     var resultList = List[MetricValue]()
 
     project.allProjectClassFiles.foreach(c => {
-      resultList =MetricValue(c.thisType.fqn,this.analysisName,c.methods.size) :: resultList
+      resultList =MetricValue(c.thisType.fqn,this.analysisName,"",c.methods.size) :: resultList
     })
 
     var classCount:Double = 0
@@ -65,10 +65,11 @@ class NFCMFMAnalysis(jarDir:File) extends MultiFileAnalysis[(Double,String)](jar
     initialRound = false
     preVersionAverageNFC = averageNFC
     val entityIdent: String = s"NFC:$previousFile:$currentFile"
+    val prevFileTmp = previousFile
     previousFile = currentFile
     roundCounter = roundCounter +1
 
-    Try(difNFCBetweenVersions,entityIdent)
+    Try(prevFileTmp,currentFile,difNFCBetweenVersions)
 
   }
 
@@ -82,7 +83,7 @@ class NFCMFMAnalysis(jarDir:File) extends MultiFileAnalysis[(Double,String)](jar
    */
   override def produceMetricValues(): List[MetricsResult] = {
     val difNFC = analysisResultsPerFile.values.map(_.get).
-      toList.map(value => MetricValue(value._2,"NFC-difference",value._1))
+      toList.map(value => MetricValue(value._1,value._2,analysisName,value._3))
 
     val metricResultBuffer = collection.mutable.ListBuffer[MetricsResult]()
     val metricValueBuffer = collection.mutable.ListBuffer[MetricValue]()
@@ -99,5 +100,5 @@ class NFCMFMAnalysis(jarDir:File) extends MultiFileAnalysis[(Double,String)](jar
   /**
    * The name for this analysis implementation. Will be used to include and exclude analyses via CLI.
    */
-  override def analysisName: String = "NFCDifMultiFile"
+  override def analysisName: String = "NFC"
 }

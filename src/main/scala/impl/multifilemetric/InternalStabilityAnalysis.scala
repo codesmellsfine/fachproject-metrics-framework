@@ -27,12 +27,12 @@ import scala.util.control.Breaks.{break, breakable}
  * Optional CLI argument:
  *  --all_value: Gibt die aufsummierten Prel A und PrelR mit aus.
  */
-class InternalStabilityAnalysis(jarDir: File) extends MultiFileAnalysis[(Double, Double, Double, String)](jarDir) {
+class InternalStabilityAnalysis(jarDir: File) extends MultiFileAnalysis[(String, String, Double)](jarDir) {
 
   private val sym_all: Symbol = Symbol("all_value")
   var previousPackagesEdgePackages: Map[String, ListBuffer[(String,String,String)]] = Map[String, ListBuffer[(String,String,String)]]()
-  var currentfile: String = ""
-  var previousfile: String = ""
+  var currentFile: String = ""
+  var previousFile: String = ""
   var all =false
 
   /**
@@ -48,9 +48,9 @@ class InternalStabilityAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,
    *  @return Try[T] object holding the intermediate result, if successful
    */
   override def produceAnalysisResultForJAR(project: Project[URL], file: File,
-                                           lastResult: Option[(Double, Double, Double, String)],
-                                           customOptions: OptionMap): Try[(Double, Double, Double, String)] = {
-    currentfile = file.getName
+                                           lastResult: Option[(String, String, Double)],
+                                           customOptions: OptionMap): Try[(String, String, Double)] = {
+    currentFile = file.getName
     produceAnalysisResultForJAR(project, lastResult, customOptions)
   }
 
@@ -65,7 +65,7 @@ class InternalStabilityAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,
    *                      of the analysis via command-line
    *  @return Try[T] object holding the intermediate result, if successful
    */
-  override def produceAnalysisResultForJAR(project: Project[URL], lastResult: Option[(Double, Double, Double, String)], customOptions: OptionMap): Try[(Double, Double, Double, String)] = {
+  override def produceAnalysisResultForJAR(project: Project[URL], lastResult: Option[(String, String, Double)], customOptions: OptionMap): Try[(String, String, Double)] = {
 
     all = customOptions.contains(sym_all)
     var IS =0.0
@@ -126,7 +126,7 @@ class InternalStabilityAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,
     var workCurrentPackage: Map[String, ListBuffer[(String,String,String)]] = Map[String, ListBuffer[(String,String,String)]]()
     workCurrentPackage= currentPackagesEdgePackages
     val current = collection.mutable.ListBuffer[String]()
-    if(!previousfile.equals(""))
+    if(!previousFile.equals(""))
     {
 
       //Filter zuerst die Entfernte oder neu hinzugefügt Package raus, da sie in der Metrik nicht betrachtet werden
@@ -285,9 +285,10 @@ class InternalStabilityAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,
 
 
     previousPackagesEdgePackages = currentPackagesEdgePackages
-    val entity_ident: String = "Difference between: " + previousfile + " and " + currentfile
-    previousfile =currentfile
-    Try(IS, PrelR,PrelA, entity_ident)
+    val entity_ident: String = "Difference between: " + previousFile + " and " + currentFile
+    val prevFileTmp = previousFile
+    previousFile =currentFile
+    Try(prevFileTmp,currentFile,IS)
   }
 
 
@@ -299,29 +300,13 @@ class InternalStabilityAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,
 
     val stability = analysisResultsPerFile.values.map(_.get)
       .toList
-      .map(value => MetricValue(value._4, "Internal_stability", value._1))
-    val removed = analysisResultsPerFile.values.map(_.get)
-      .toList
-      .map(value => MetricValue(value._4, "PREL_Remove", value._2))
-    val append = analysisResultsPerFile.values.map(_.get)
-      .toList
-      .map(value => MetricValue(value._4, "PREL_Append", value._3))
-
+      .map(value => MetricValue(value._1,value._2,analysisName,value._3))
 
     val MetricsResultBuffer = collection.mutable.ListBuffer[MetricsResult]()
     val valueMetrik = collection.mutable.ListBuffer[MetricValue]()
-
-    if(all) {
-      valueMetrik.appendAll(removed)
-      valueMetrik.appendAll(append)
-    }
     valueMetrik.appendAll(stability)
 
     MetricsResultBuffer.append(MetricsResult(analysisName, jarDir, success = true, metricValues = valueMetrik.toList))
-
-
-
-
 
     MetricsResultBuffer.toList
   }

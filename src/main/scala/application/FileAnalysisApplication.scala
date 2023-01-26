@@ -64,7 +64,7 @@ trait FileAnalysisApplication extends CsvFileOutput{
       results.foreach { res =>
         log.info(s"Results for analysis '${res.analysisName}' on file ${res.jarFile.getName}:")
         res.metricValues.foreach { v =>
-          log.info(s"\t- ${v.metricName} on ${v.entityIdent}: ${v.metricValue}")
+          log.info(s"\t- ${v.metricName} on ${v.previousVersion} and ${v.currentVersion}: ${v.metricValue}")
         }
       }
     }

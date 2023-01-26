@@ -10,7 +10,7 @@ import org.tud.sse.metrics.input.CliParser.OptionMap
 
 import scala.util.Try
 
-class DITMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,String)](jarDir:File){
+class DITMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(String, String, Double)](jarDir:File){
 
   var previousFile: String = ""
   var currentFile: String = ""
@@ -32,19 +32,19 @@ class DITMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,String)](ja
    *                      of the analysis via command-line
    * @return Try[T] object holding the intermediate result, if successful
    */
-  override protected def produceAnalysisResultForJAR(project: Project[URL],file: File, lastResult: Option[(Double, String)], customOptions: OptionMap): Try[(Double, String)] = {
+  override protected def produceAnalysisResultForJAR(project: Project[URL],file: File, lastResult: Option[(String, String, Double)], customOptions: OptionMap): Try[(String, String, Double)] = {
     currentFile = file.getName
     produceAnalysisResultForJAR(project,lastResult,customOptions)
   }
 
-  override def produceAnalysisResultForJAR(project: Project[URL], lastResult: Option[(Double, String)], customOptions: OptionMap): Try[(Double, String)] = {
+  override def produceAnalysisResultForJAR(project: Project[URL], lastResult: Option[(String, String, Double)], customOptions: OptionMap): Try[(String, String, Double)] = {
 
     var resultList = List[MetricValue]()
 
     project.allProjectClassFiles.foreach(c => {
       val supertypes = project.classHierarchy.allSupertypes(c.thisType).size
       val className = c.thisType.fqn
-      resultList =MetricValue(className,this.analysisName,supertypes) :: resultList
+      resultList =MetricValue(className,this.analysisName,"",supertypes) :: resultList
     })
 
     var classCount:Double = 0
@@ -67,10 +67,11 @@ class DITMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,String)](ja
     initialRound = false
     preVersionAverageDIT = averageDIT
     val entityIdent: String = s"DIT:$previousFile:$currentFile"
+    val prevFileTmp = previousFile
     previousFile = currentFile
     roundCounter = roundCounter +1
 
-    Try(difDITBetweenVersions,entityIdent)
+    Try(prevFileTmp,currentFile,difDITBetweenVersions)
 
   }
 
@@ -83,7 +84,7 @@ class DITMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,String)](ja
    */
   override def produceMetricValues(): List[MetricsResult] = {
     val difCBO = analysisResultsPerFile.values.map(_.get).
-      toList.map(value => MetricValue(value._2,"DIT-difference",value._1))
+      toList.map(value => MetricValue(value._1,value._2,analysisName,value._3))
 
     val metricResultBuffer = collection.mutable.ListBuffer[MetricsResult]()
     val metricValueBuffer = collection.mutable.ListBuffer[MetricValue]()
@@ -100,5 +101,5 @@ class DITMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,String)](ja
   /**
    * The name for this analysis implementation. Will be used to include and exclude analyses via CLI.
    */
-  override def analysisName: String = "DITDifMultiFile"
+  override def analysisName: String = "DIT"
 }

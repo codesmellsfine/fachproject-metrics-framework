@@ -42,7 +42,7 @@ class AverageNumberOfMethodsAnalysis(directory: File)
     val averageMethods =
       analysisResultsPerFile.values.map(_.get).sum.toDouble / analysisResultsPerFile.size.toDouble
 
-    val metricList = List(MetricValue("file", "methods.average", averageMethods))
+    val metricList = List(MetricValue("file", "methods.average","", averageMethods))
     List(MetricsResult(analysisName, directory, success = true, metricList))
   }
 

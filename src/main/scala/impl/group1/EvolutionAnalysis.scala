@@ -244,11 +244,11 @@ class EvolutionAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,Double,D
 
     //value == (evolution, externalEvolution, internalEvolution, entityIdent)
     val evolutionMetric = analysisResultsPerFile.values.map(_.get).
-      toList.map(value => MetricValue(value._4,"Evolution",value._1))
+      toList.map(value => MetricValue(value._4,"Evolution","",value._1))
     val externalEvoMetric = analysisResultsPerFile.values.map(_.get).
-      toList.map(value => MetricValue(value._4,"External Evolution",value._2))
+      toList.map(value => MetricValue(value._4,"External Evolution","",value._2))
     val internalEvoMetric = analysisResultsPerFile.values.map(_.get).
-      toList.map(value => MetricValue(value._4,"Internal Evolution",value._3))
+      toList.map(value => MetricValue(value._4,"Internal Evolution","",value._3))
 
     val metricResultBuffer = collection.mutable.ListBuffer[MetricsResult]()
     val metricValueBuffer = collection.mutable.ListBuffer[MetricValue]()

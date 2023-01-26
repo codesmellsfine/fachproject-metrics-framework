@@ -11,7 +11,7 @@ import org.tud.sse.metrics.input.CliParser.OptionMap
 import scala.util.Try
 import scala.util.control.Breaks.{break, breakable}
 
-class IntEvolutionAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,String)](jarDir:File) {
+class IntEvolutionAnalysis(jarDir: File) extends MultiFileAnalysis[(String, String, Double)](jarDir:File) {
 
   var previousFile: String = ""
   var currentFile: String = ""
@@ -33,14 +33,14 @@ class IntEvolutionAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,Strin
    *                      of the analysis via command-line
    * @return Try[T] object holding the intermediate result, if successful
    */
-  override protected def produceAnalysisResultForJAR(project: Project[URL], file: File, lastResult: Option[(Double, String)], customOptions: OptionMap): Try[(Double, String)] = {
+  override protected def produceAnalysisResultForJAR(project: Project[URL], file: File, lastResult: Option[(String, String, Double)], customOptions: OptionMap): Try[(String, String, Double)] = {
 
     currentFile = file.toString
     produceAnalysisResultForJAR(project, lastResult, customOptions)
   }
 
 
-  override protected def produceAnalysisResultForJAR(project: Project[URL], lastResult: Option[(Double, String)], customOptions: OptionMap): Try[(Double, String)] = {
+  override protected def produceAnalysisResultForJAR(project: Project[URL], lastResult: Option[(String, String, Double)], customOptions: OptionMap): Try[(String, String, Double)] = {
     var internalEvolution: Double = 0
     var entityIdent: String = ""
 
@@ -88,11 +88,12 @@ class IntEvolutionAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,Strin
     }
 
       entityIdent = s"IntEvo:$previousFile:$currentFile"
+      val prevFileTmp = previousFile
       previousFile = currentFile
       previousPackages = currentPackages
       initialRound = false
 
-      Try(internalEvolution, entityIdent)
+      Try(prevFileTmp,currentFile,internalEvolution)
     }
 
     /**
@@ -104,7 +105,7 @@ class IntEvolutionAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,Strin
      */
     override def produceMetricValues(): List[MetricsResult] = {
       val intEvo = analysisResultsPerFile.values.map(_.get).
-        toList.map(value => MetricValue(value._2, "InternalEvolution", value._1))
+        toList.map(value => MetricValue(value._1,value._2, analysisName, value._3))
 
       val metricResultBuffer = collection.mutable.ListBuffer[MetricsResult]()
       val metricValueBuffer = collection.mutable.ListBuffer[MetricValue]()
@@ -121,6 +122,6 @@ class IntEvolutionAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,Strin
     /**
      * The name for this analysis implementation. Will be used to include and exclude analyses via CLI.
      */
-    override def analysisName: String = "InternalEvolution"
+    override def analysisName: String = "IntEvo"
 }
 

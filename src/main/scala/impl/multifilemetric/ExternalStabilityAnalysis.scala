@@ -30,7 +30,7 @@ import scala.util.Try
  *  - --ultra_verbose (like verbose) + list all package names and class (names) contained in each package
  *
  */
-class ExternalStabilityAnalysis(jarDir: File) extends MultiFileAnalysis[(Double, Double, Double, String)](jarDir) {
+class ExternalStabilityAnalysis(jarDir: File) extends MultiFileAnalysis[(String, String, Double)](jarDir) {
 
   var previousPackages: Set[String] = Set[String]()
   var previousPackagesSize: Map[String, Int] = Map[String, Int]()
@@ -42,8 +42,8 @@ class ExternalStabilityAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,
   var verbose_ultra: Boolean = false
   var es_rem: Boolean = false
   var es_red: Boolean = false
-  var currentfile: String = ""
-  var previousfile: String = ""
+  var currentFile: String = ""
+  var previousFile: String = ""
 
   private val sym_es_rem: Symbol = Symbol("es_rem")
   private val sym_es_red: Symbol = Symbol("es_red")
@@ -71,9 +71,9 @@ class ExternalStabilityAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,
    * @return Try[T] object holding the intermediate result, if successful
    */
   override def produceAnalysisResultForJAR(project: Project[URL], file: File,
-                                           lastResult: Option[(Double, Double, Double, String)],
-                                           customOptions: OptionMap): Try[(Double, Double, Double, String)] = {
-    currentfile = file.toString
+                                           lastResult: Option[(String, String, Double)],
+                                           customOptions: OptionMap): Try[(String, String, Double)] = {
+    currentFile = file.toString
     produceAnalysisResultForJAR(project, lastResult, customOptions)
   }
 
@@ -91,8 +91,8 @@ class ExternalStabilityAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,
    * @return Try[T] object holding the intermediate result, if successful
    */
   override def produceAnalysisResultForJAR(project: Project[URL],
-                                           lastResult: Option[(Double, Double, Double, String)],
-                                           customOptions: OptionMap): Try[(Double, Double, Double, String)] = {
+                                           lastResult: Option[(String, String, Double)],
+                                           customOptions: OptionMap): Try[(String, String, Double)] = {
     //The ExternalStability metric consists of two parts ES_rem and ES_red
     //ES_rem is a metric that measures the relation between the number of classes which where contained
     //in removed packages and the total number of classes in a jar
@@ -129,8 +129,8 @@ class ExternalStabilityAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,
 
     if (verbose_ultra || verbose) {
       log.info("Round: " + counter)
-      log.info("previous file: " + previousfile)
-      log.info("current File: " + currentfile)
+      log.info("previous file: " + previousFile)
+      log.info("current File: " + currentFile)
       log.info("Number of current Packages: " + currentPackages.size)
       log.info("Number of previous Packages: " + previousPackages.size)
       log.info("Number of Classes in Project: " + currentNumberOfClasses)
@@ -176,7 +176,7 @@ class ExternalStabilityAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,
     }
 
     if (verbose_ultra) {
-      log.info("\n\nFile: " + currentfile)
+      log.info("\n\nFile: " + currentFile)
       for (pack <- currentClassesInPackages) {
         log.info("\n\nPackage: " + pack._1 + " size: " + pack._2.size)
         currentClassesInPackages.get(pack._1).foreach(classes => {
@@ -232,7 +232,7 @@ class ExternalStabilityAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,
       log.info("ES: " + external_stability_metric_value)
     }
 
-    var entity_ident: String = "Difference between: " + previousfile + " and " + currentfile
+    var entity_ident: String = "Difference between: " + previousFile + " and " + currentFile
     previousPackages = currentPackages
     previousNumberOfClasses = currentNumberOfClasses
     firstRound = false
@@ -242,13 +242,14 @@ class ExternalStabilityAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,
 
     //Store the package-class relationship information for the processing in the next round
     previousClassesInPackages = currentClassesInPackages
-    previousfile = currentfile
+    val prevFileTmp = previousFile
+    previousFile = currentFile
 
     //The final StabilityMetric is calculated by ES_rem * ES_red
     //The result contains the StabilityMetric, the two partial metrics and round in which these metrics were calculated
 
 
-    Try(external_stability_metric_value, ES_rem, ES_red, entity_ident)
+    Try(prevFileTmp, currentFile,external_stability_metric_value)
 
   }
 
@@ -257,27 +258,14 @@ class ExternalStabilityAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,
     //value == (external_stability_metric_value, ES_rem, ES_red, entity_ident)
     val stability_values = analysisResultsPerFile.values.map(_.get)
       .toList
-      .map(value => MetricValue(value._4, "ES_stability", value._1))
-    val removed_values = analysisResultsPerFile.values.map(_.get)
-      .toList
-      .map(value => MetricValue(value._4, "ES_Removed", value._2))
-    val remained_values = analysisResultsPerFile.values.map(_.get)
-      .toList
-      .map(value => MetricValue(value._4, "ES_Remained", value._3))
+      .map(value => MetricValue(value._1,value._2, analysisName, value._3))
 
 
     val MetricsResultBuffer = collection.mutable.ListBuffer[MetricsResult]()
-    val MetricValueBffer = collection.mutable.ListBuffer[MetricValue]()
+    val MetricValueBuffer = collection.mutable.ListBuffer[MetricValue]()
+    MetricValueBuffer.appendAll(stability_values)
 
-    MetricValueBffer.appendAll(stability_values)
-    if (es_rem) {
-      MetricValueBffer.appendAll(removed_values)
-    }
-    if (es_red) {
-      MetricValueBffer.appendAll(remained_values)
-    }
-
-    MetricsResultBuffer.append(MetricsResult(analysisName, jarDir, success = true, metricValues = MetricValueBffer.toList))
+    MetricsResultBuffer.append(MetricsResult(analysisName, jarDir, success = true, metricValues = MetricValueBuffer.toList))
 
     if (verbose_ultra || verbose) {
       MetricsResultBuffer.head.metricValues.foreach(value => log.info("Metrik Result: " + value))
@@ -286,7 +274,7 @@ class ExternalStabilityAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,
     MetricsResultBuffer.toList
   }
 
-  override def analysisName: String = "External Stability"
+  override def analysisName: String = "ExtSta"
 
 
 }

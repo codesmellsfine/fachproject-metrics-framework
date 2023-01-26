@@ -11,7 +11,7 @@ import org.tud.sse.metrics.input.CliParser.OptionMap
 import scala.collection.mutable.ListBuffer
 import scala.util.Try
 
-class WMCMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,String)](jarDir){
+class WMCMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(String, String, Double)](jarDir){
 
   var previousFile: String = ""
   var currentFile: String = ""
@@ -33,12 +33,12 @@ class WMCMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,String)](ja
    *                      of the analysis via command-line
    * @return Try[T] object holding the intermediate result, if successful
    */
-  override protected def produceAnalysisResultForJAR(project: Project[URL],file:File, lastResult: Option[(Double, String)], customOptions: OptionMap): Try[(Double, String)] = {
+  override protected def produceAnalysisResultForJAR(project: Project[URL],file:File, lastResult: Option[(String, String, Double)], customOptions: OptionMap): Try[(String, String, Double)] = {
     currentFile = file.getName
     produceAnalysisResultForJAR(project,lastResult,customOptions)
   }
 
-  override def produceAnalysisResultForJAR(project: Project[URL], lastResult: Option[(Double, String)], customOptions: OptionMap): Try[(Double, String)] = {
+  override def produceAnalysisResultForJAR(project: Project[URL], lastResult: Option[(String, String, Double)], customOptions: OptionMap): Try[(String, String, Double)] = {
 
     val classes = project.allProjectClassFiles
     var WMCProjectSum = 0.0
@@ -77,7 +77,6 @@ class WMCMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,String)](ja
       }
       //Adding to sum and saving WMC of current class
       WMCProjectSum = WMCProjectSum + WMC
-      rlist += MetricValue("WMC von " + classFile.thisType.fqn, this.analysisName, WMC)
     }
     val averageWMC = WMCProjectSum/classesCount
 
@@ -90,10 +89,11 @@ class WMCMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,String)](ja
     initialRound = false
     preVersionAverageWMC = averageWMC
     val entityIdent: String = s"WMC:$previousFile:$currentFile"
+    val prevFileTmp = previousFile
     previousFile = currentFile
     roundCounter = roundCounter +1
 
-    Try(difWMCBetweenVersions,entityIdent)
+    Try(prevFileTmp,currentFile,difWMCBetweenVersions)
   }
 
 
@@ -106,7 +106,7 @@ class WMCMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,String)](ja
    */
   override def produceMetricValues(): List[MetricsResult] = {
     val difWMC = analysisResultsPerFile.values.map(_.get).
-      toList.map(value => MetricValue(value._2,"WMC-difference",value._1))
+      toList.map(value => MetricValue(value._1,value._2, analysisName,value._3))
 
     val metricResultBuffer = collection.mutable.ListBuffer[MetricsResult]()
     val metricValueBuffer = collection.mutable.ListBuffer[MetricValue]()
@@ -122,5 +122,5 @@ class WMCMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(Double,String)](ja
   /**
    * The name for this analysis implementation. Will be used to include and exclude analyses via CLI.
    */
-  override def analysisName: String = "WMCDifMultiFile"
+  override def analysisName: String = "WMC"
 }

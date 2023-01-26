@@ -10,7 +10,7 @@ import org.tud.sse.metrics.input.CliParser.OptionMap
 
 import scala.util.Try
 
-class CBOMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(Double, String)](jarDir) {
+class CBOMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(String, String, Double)](jarDir) {
 
   var previousFile: String = ""
   var currentFile: String = ""
@@ -36,12 +36,12 @@ class CBOMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(Double, String)](j
    *                      of the analysis via command-line
    * @return Try[T] object holding the intermediate result, if successful
    */
-  override protected def produceAnalysisResultForJAR(project: Project[URL],file: File, lastResult: Option[(Double, String)], customOptions: OptionMap): Try[(Double, String)] = {
+  override protected def produceAnalysisResultForJAR(project: Project[URL],file: File, lastResult: Option[(String, String, Double)], customOptions: OptionMap): Try[(String, String, Double)] = {
     currentFile = file.getName
     produceAnalysisResultForJAR(project,lastResult,customOptions)
   }
 
-  override def produceAnalysisResultForJAR(project: Project[URL], lastResult: Option[(Double, String)], customOptions: OptionMap): Try[(Double, String)] = {
+  override def produceAnalysisResultForJAR(project: Project[URL], lastResult: Option[(String, String, Double)], customOptions: OptionMap): Try[(String, String, Double)] = {
     var resultList = List[MetricValue]()
     //Creating a set of all classes in the project
     var allProjectClasses = Set[String]()
@@ -65,7 +65,7 @@ class CBOMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(Double, String)](j
       )
       // log.info("coupled with: " + coupledWith)
       val className = c.thisType.simpleName
-      resultList = MetricValue(className, this.analysisName, coupledWith.size)::resultList
+      resultList = MetricValue(className, this.analysisName,"", coupledWith.size)::resultList
     }
     )
     var classCount:Double = 0
@@ -87,10 +87,11 @@ class CBOMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(Double, String)](j
     initialRound = false
     preVersionAverageCBO = averageCoupling
     val entityIdent: String = s"CBO:$previousFile:$currentFile"
+    val prevFileTmp = previousFile
     previousFile = currentFile
     roundCounter = roundCounter +1
 
-    Try(difCBOBetweenVersions,entityIdent)
+    Try(prevFileTmp,currentFile,difCBOBetweenVersions)
   }
 
   /**
@@ -102,7 +103,7 @@ class CBOMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(Double, String)](j
    */
   override def produceMetricValues(): List[MetricsResult] = {
     val difCBO = analysisResultsPerFile.values.map(_.get).
-      toList.map(value => MetricValue(value._2,"CBO-difference",value._1))
+      toList.map(value => MetricValue(value._1,value._2,analysisName,value._3))
 
     val metricResultBuffer = collection.mutable.ListBuffer[MetricsResult]()
     val metricValueBuffer = collection.mutable.ListBuffer[MetricValue]()
@@ -119,5 +120,5 @@ class CBOMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(Double, String)](j
   /**
    * The name for this analysis implementation. Will be used to include and exclude analyses via CLI.
    */
-  override def analysisName: String = "CBODifMultiFile"
+  override def analysisName: String = "CBO"
 }

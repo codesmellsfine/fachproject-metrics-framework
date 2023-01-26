@@ -19,7 +19,7 @@ class NumberOfMethodsAnalysis extends SingleFileAnalysis {
 
     val metric = if (onlyCountProjectMethods) project.projectMethodsCount else project.methodsCount
 
-    List(MetricValue("file", "methods.count", metric))
+    List(MetricValue("file", "methods.count","", metric))
   }
 
   override def analysisName: String = "method.count"
