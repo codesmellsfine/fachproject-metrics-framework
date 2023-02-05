@@ -282,8 +282,6 @@ class InternalStabilityAnalysis(jarDir: File) extends MultiFileAnalysis[(String,
 
 
 
-
-
     previousPackagesEdgePackages = currentPackagesEdgePackages
     val entity_ident: String = "Difference between: " + previousFile + " and " + currentFile
     val prevFileTmp = previousFile
@@ -314,5 +312,5 @@ class InternalStabilityAnalysis(jarDir: File) extends MultiFileAnalysis[(String,
   /**
    * The name for this analysis implementation. Will be used to include and exclude analyses via CLI.
    */
-  override def analysisName: String = "Internal Stability"
+  override def analysisName: String = "IntSta"
 }

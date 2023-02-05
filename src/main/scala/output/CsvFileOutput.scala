@@ -1,13 +1,14 @@
 package org.tud.sse.metrics
 package output
 
-import StatisticsOutput.withCsvWriter
 
-import scala.util.Try
-import analysis.{MetricValue, MetricsResult}
 import org.slf4j.{Logger, LoggerFactory}
+import org.tud.sse.metrics.analysis.MetricsResult
+import org.tud.sse.metrics.impl.MFMResultsUtility
+import org.tud.sse.metrics.output.StatisticsOutput.withCsvWriter
 
 import scala.collection.mutable
+import scala.util.Try
 
 /**
  * Trait providing functionality to export a list of metrics results to a CSV file.
@@ -19,17 +20,19 @@ trait CsvFileOutput {
 
 
   def writeResultsToFile(outputFilePath: String, results: List[MetricsResult]): Try[Unit] = withCsvWriter(outputFilePath){ csvWriter =>
-    val headings = Array("MetricName","PreVersion","Currentversion","MetricValue")
+    val headings = Array("MetricName","PreVersionFile","CurrentversionFile","PreVersion","CurrentVersion","MetricValue","VersionChangeType")
     csvWriter.writeNext(headings)
 
-    var metricValueList = List[MetricValue]()
 
     val fileMetricsMap: mutable.Map[String, mutable.Map[String, Double]] = new mutable.HashMap()
     // val fileMetricsList: List
 
+
     results.foreach(result =>{
       result.metricValues.foreach(value =>{
-        val arrayToWrite = Array(value.metricName, value.previousVersion,value.currentVersion,value.metricValue.toString)
+        val mFMResult = new MFMResultsUtility(value.metricName, value.previousVersion, value.currentVersion, value.metricValue.toString)
+        val arrayToWrite = Array(value.metricName,value.previousVersion, value.currentVersion, mFMResult.extractVersionNumber(value.previousVersion),mFMResult.extractVersionNumber(value.currentVersion),value.metricValue.toString, mFMResult.versionType.toString)
+
         csvWriter.writeNext(arrayToWrite)
       })
     })
@@ -65,6 +68,6 @@ trait CsvFileOutput {
 //        }).toArray
 //    }
 //      .foreach(t => csvWriter.writeNext(t))
-}
+  }
 
 }

@@ -79,11 +79,11 @@ class IntEvolutionAnalysis(jarDir: File) extends MultiFileAnalysis[(String, Stri
         }
       }
 
-      log.info(s"Maintained Packages interactions with new Packages: $interactionsWithNewPackages")
+//      log.info(s"Maintained Packages interactions with new Packages: $interactionsWithNewPackages")
 
       if(maintainedPackagesSize!=0){
         internalEvolution = interactionsWithNewPackages/maintainedPackages.size
-        log.info(s"internalEvolution: $internalEvolution")
+//        log.info(s"internalEvolution: $internalEvolution")
       }
     }
 

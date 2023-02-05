@@ -59,9 +59,9 @@ class DITMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(String, String, Do
     if(classCount>0){
       averageDIT = dITSum/classCount
       if(!initialRound){
-        log.info(s"averageDIT: $averageDIT, preDIT: $preVersionAverageDIT")
+//         log.info(s"averageDIT: $averageDIT, preDIT: $preVersionAverageDIT")
         difDITBetweenVersions = (averageDIT - preVersionAverageDIT)/preVersionAverageDIT
-        log.info(s"difCoupling: $difDITBetweenVersions")
+//         log.info(s"difCoupling: $difDITBetweenVersions")
       }
     }
     initialRound = false

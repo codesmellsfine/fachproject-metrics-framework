@@ -7,6 +7,7 @@ import org.tud.sse.metrics.analysis.MultiFileAnalysis
 import org.tud.sse.metrics.application.MultiFileAnalysisApplication
 
 object MultiFileAnalysisApplication extends MultiFileAnalysisApplication {
+
   override protected def buildAnalyses(jarDirectory: File): Seq[MultiFileAnalysis[_]] = Seq(
     // Singlefile metrics Difference between Versions
     new LOCProMFMAnalysis(jarDirectory),

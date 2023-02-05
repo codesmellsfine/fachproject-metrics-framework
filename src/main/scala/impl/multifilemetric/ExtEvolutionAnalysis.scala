@@ -50,13 +50,13 @@ class ExtEvolutionAnalysis(jarDir: File) extends MultiFileAnalysis[(String, Stri
       var numberOfClassesInNewPackages: Double = 0
 
       newPackages.foreach(p => numberOfClassesInNewPackages += project.classesPerPackage(p).size)
-      log.info(s"Classes in new Packages Count: $numberOfClassesInNewPackages")
+//      log.info(s"Classes in new Packages Count: $numberOfClassesInNewPackages")
 
       if (currentNumberOfClasses != 0) {
-        log.info(s"Number of Classes: $currentNumberOfClasses")
+//        log.info(s"Number of Classes: $currentNumberOfClasses")
         externalEvolution = numberOfClassesInNewPackages / currentNumberOfClasses
       }
-      log.info(s"externalEvolution: $externalEvolution")
+//      log.info(s"externalEvolution: $externalEvolution")
     }
 
       entityIdent = s"ExtEvo:$previousFile:$currentFile"

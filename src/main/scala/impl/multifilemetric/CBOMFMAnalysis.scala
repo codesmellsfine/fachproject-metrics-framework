@@ -78,9 +78,9 @@ class CBOMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(String, String, Do
     if(classCount>0) {
     averageCoupling = couplingSum/classCount
     if(!initialRound){
-      log.info(s"averageCoupling: $averageCoupling, preCoupling: $preVersionAverageCBO")
+//       log.info(s"averageCoupling: $averageCoupling, preCoupling: $preVersionAverageCBO")
       difCBOBetweenVersions = (averageCoupling - preVersionAverageCBO)/preVersionAverageCBO
-      log.info(s"difCoupling: $difCBOBetweenVersions")
+//       log.info(s"difCoupling: $difCBOBetweenVersions")
     }
     }
 

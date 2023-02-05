@@ -81,9 +81,9 @@ class WMCMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(String, String, Do
     val averageWMC = WMCProjectSum/classesCount
 
     if(!initialRound){
-      log.info(s"averageCoupling: $averageWMC, preCoupling: $preVersionAverageWMC")
+//      log.info(s"averageCoupling: $averageWMC, preCoupling: $preVersionAverageWMC")
       difWMCBetweenVersions = (averageWMC - preVersionAverageWMC)/preVersionAverageWMC
-      log.info(s"difCoupling: $difWMCBetweenVersions")
+//      log.info(s"difCoupling: $difWMCBetweenVersions")
     }
 
     initialRound = false

@@ -59,9 +59,9 @@ class NOCMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(String, String, Do
     if(classCount>0){
       averageNOC = nOCSum/classCount
       if(!initialRound){
-        log.info(s"averageNOC: $averageNOC, preNOC: $preVersionAverageNOC")
+//        log.info(s"averageNOC: $averageNOC, preNOC: $preVersionAverageNOC")
         difNOCBetweenVersions = (averageNOC - preVersionAverageNOC)/preVersionAverageNOC
-        log.info(s"NOCdifBetweenVersions: $difNOCBetweenVersions")
+//        log.info(s"NOCdifBetweenVersions: $difNOCBetweenVersions")
       }
     }
     initialRound = false
