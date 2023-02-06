@@ -3,12 +3,13 @@ package impl
 
 import org.tud.sse.metrics.impl.Version.Version
 
-class MFMResultsUtility(var metricName: String, var prevVersion: String, var currentVersion: String, var metricResult: String) {
+class MFMResultsUtility(var metricName: String, var prevFileName: String, var curFileName: String, var metricResult: Double) {
 
 //  protected val log: Logger = LoggerFactory.getLogger(this.getClass)
 //  log.info(s"metricName: $metricName, prevVersion: $prevVersion, curVersion: $currentVersion, metricResult: $metricResult")
-  var versionType:Version = determineVersionType(extractVersionNumber(prevVersion),extractVersionNumber(currentVersion))
-
+  var versionType:Version = determineVersionType(extractVersionNumber(prevFileName),extractVersionNumber(curFileName))
+  var prevVersion: String = extractVersionNumber(prevFileName)
+  var curVersion: String = extractVersionNumber(curFileName)
 
    def extractVersionNumber(fileName: String): String = {
      if(fileName!= ""){
@@ -24,7 +25,9 @@ class MFMResultsUtility(var metricName: String, var prevVersion: String, var cur
 
     val prevVersionNumbers:Array[String] = prevVersionNumber.split("\\.")
     val curVersionNumbers:Array[String] = curVersionNumber.split("\\.")
-    if(prevVersionNumbers.length> 0 && curVersionNumbers.length > 0) {
+
+    if(prevVersionNumbers.length> 1 && curVersionNumbers.length > 0) {
+//      System.out.println(s"prevVersionNumbersLength: ${prevVersionNumbers.length}, curVersionNUmbersLength: ${curVersionNumbers.length}, PrevFileName: ${this.prevFileName}")
       if (prevVersionNumbers(0).compareTo(curVersionNumbers(0)) != 0) {
 //        log.info(s"First VersionNumberPrev: ${prevVersionNumbers(0)}, First VersionNumberCur: ${curVersionNumbers(0)}")
         Version.MAJORVERSION

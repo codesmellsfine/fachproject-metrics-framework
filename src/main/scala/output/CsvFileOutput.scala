@@ -4,7 +4,7 @@ package output
 
 import org.slf4j.{Logger, LoggerFactory}
 import org.tud.sse.metrics.analysis.MetricsResult
-import org.tud.sse.metrics.impl.MFMResultsUtility
+import org.tud.sse.metrics.impl.{MFMResultsUtility, SQLConnector}
 import org.tud.sse.metrics.output.StatisticsOutput.withCsvWriter
 
 import scala.collection.mutable
@@ -26,20 +26,26 @@ trait CsvFileOutput {
 
     val fileMetricsMap: mutable.Map[String, mutable.Map[String, Double]] = new mutable.HashMap()
     // val fileMetricsList: List
+    var mFMResults:List[MFMResultsUtility] = List()
+    val sQLConnector: SQLConnector = new SQLConnector {}
+    sQLConnector.createMFMResultTable()
 
 
     results.foreach(result =>{
       result.metricValues.foreach(value =>{
-        val mFMResult = new MFMResultsUtility(value.metricName, value.previousVersion, value.currentVersion, value.metricValue.toString)
+        val mFMResult = new MFMResultsUtility(value.metricName, value.previousVersion, value.currentVersion, value.metricValue)
+        mFMResults = mFMResult::mFMResults
         val arrayToWrite = Array(value.metricName,value.previousVersion, value.currentVersion, mFMResult.extractVersionNumber(value.previousVersion),mFMResult.extractVersionNumber(value.currentVersion),value.metricValue.toString, mFMResult.versionType.toString)
-
         csvWriter.writeNext(arrayToWrite)
       })
     })
+    sQLConnector.fillMetricResultTable {
+      mFMResults
+    }
 
 
 
-//    results.foreach{ res =>
+    //    results.foreach{ res =>
 //      res.metricValues.foreach { value =>
 //        val entityIdent = value.previousVersion + "$" + value.currentVersion + "$" + value.metricName
 //
