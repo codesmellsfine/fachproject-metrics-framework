@@ -58,7 +58,7 @@ class NFCMFMAnalysis(jarDir:File) extends MultiFileAnalysis[(String, String, Dou
       averageNFC = nFCSum/classCount
       if(!initialRound){
 //        log.info(s"averageNFC: $averageNFC, preNFC: $preVersionAverageNFC")
-        difNFCBetweenVersions = (averageNFC - preVersionAverageNFC)/preVersionAverageNFC
+        difNFCBetweenVersions = (averageNFC - preVersionAverageNFC)*100/preVersionAverageNFC
 //        log.info(s"NFCdifBetweenVersions: $difNFCBetweenVersions")
       }
     }

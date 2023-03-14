@@ -1,13 +1,14 @@
 package org.tud.sse.metrics
 package application
 
-import analysis.{MetricsResult, MultiFileAnalysis}
-import input.CliParser
-import input.CliParser.OptionMap
-import opal.{OPALLogAdapter, OPALProjectHelper}
-
 import java.io.{File, FileInputStream, FilenameFilter}
 import java.nio.file.Files
+
+import org.tud.sse.metrics.analysis.{MetricsResult, MultiFileAnalysis}
+import org.tud.sse.metrics.input.CliParser
+import org.tud.sse.metrics.input.CliParser.OptionMap
+import org.tud.sse.metrics.opal.{OPALLogAdapter, OPALProjectHelper}
+
 import scala.util.{Failure, Success, Try}
 
 /**
@@ -67,7 +68,7 @@ trait MultiFileAnalysisApplication extends FileAnalysisApplication {
    *
    * @return An instance of type Ordering[File], that defines the ordering relation
    */
-  protected def fileOrdering: Ordering[File] = (x: File, y: File) => x.getName.compare(y.getName)
+  protected def fileOrdering: Ordering[File] = new SemVerOrdering
 
   /**
    * Function that defines which files are processed by this analysis application. Per default, only files

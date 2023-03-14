@@ -9,15 +9,18 @@ abstract class SQLConnector {
 
   def createMFMResultTable() = {
     statement.executeUpdate("drop table if exists MFMResultData")
-    statement.executeUpdate("create table MFMResultData (MetricName string, PreviousVersionName string, CurrentVersionName string, PreviousVersion string, CurrentVersion string, MetricValue double, VersionChangeType string)")
+    statement.executeUpdate("create table MFMResultData (MetricName string, " +
+                            "PreviousVersionName string, CurrentVersionName string, " +
+                            "PreviousVersion string, CurrentVersion string, " +
+                            "MetricValue double, VersionChangeType string)")
   }
 
   def fillMetricResultTable(mFMResults: List[MFMResultsUtility]) ={
     this.connection.setAutoCommit(false)
 
-    var insertTableSQL:String = "INSERT INTO MFMResultData" + "(MetricName, PreviousVersionName, CurrentVersionName, PreviousVersion,CurrentVersion,MetricValue,VersionChangeType) VALUES" + "(?,?,?,?,?,?,?)"
+    val insertTableSQL: String = "INSERT INTO MFMResultData" + "(MetricName, PreviousVersionName, CurrentVersionName, PreviousVersion,CurrentVersion,MetricValue,VersionChangeType) VALUES" + "(?,?,?,?,?,?,?)"
 
-    var pstmt: PreparedStatement = connection.prepareStatement(insertTableSQL)
+    val pstmt: PreparedStatement = connection.prepareStatement(insertTableSQL)
 
     mFMResults.foreach(result =>{
       pstmt.setString(1,result.metricName)
@@ -35,7 +38,6 @@ abstract class SQLConnector {
     connection.close()
 
   }
-
 
 
 }

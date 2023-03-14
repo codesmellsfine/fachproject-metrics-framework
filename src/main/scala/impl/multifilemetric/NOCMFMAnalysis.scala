@@ -41,10 +41,9 @@ class NOCMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(String, String, Do
 
     var resultList = List[MetricValue]()
 
-    project.allProjectClassFiles.foreach(c => {
-      val directChildren = project.classHierarchy.directSubtypesCount(c.thisType)
-
-      resultList =MetricValue(c.thisType.fqn,this.analysisName,"",directChildren) :: resultList
+    project.allProjectClassFiles.foreach(classFile => {
+      val directChildren = project.classHierarchy.directSubtypesCount(classFile.thisType)
+      resultList =MetricValue(classFile.thisType.fqn,this.analysisName,"",directChildren) :: resultList
     })
 
     var classCount:Double = 0
@@ -60,7 +59,7 @@ class NOCMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(String, String, Do
       averageNOC = nOCSum/classCount
       if(!initialRound){
 //        log.info(s"averageNOC: $averageNOC, preNOC: $preVersionAverageNOC")
-        difNOCBetweenVersions = (averageNOC - preVersionAverageNOC)/preVersionAverageNOC
+        difNOCBetweenVersions = (averageNOC - preVersionAverageNOC)*100/preVersionAverageNOC
 //        log.info(s"NOCdifBetweenVersions: $difNOCBetweenVersions")
       }
     }

@@ -82,7 +82,7 @@ class WMCMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(String, String, Do
 
     if(!initialRound){
 //      log.info(s"averageCoupling: $averageWMC, preCoupling: $preVersionAverageWMC")
-      difWMCBetweenVersions = (averageWMC - preVersionAverageWMC)/preVersionAverageWMC
+      difWMCBetweenVersions = (averageWMC - preVersionAverageWMC)*100/preVersionAverageWMC
 //      log.info(s"difCoupling: $difWMCBetweenVersions")
     }
 

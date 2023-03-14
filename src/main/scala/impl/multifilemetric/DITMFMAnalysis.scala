@@ -41,9 +41,9 @@ class DITMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(String, String, Do
 
     var resultList = List[MetricValue]()
 
-    project.allProjectClassFiles.foreach(c => {
-      val supertypes = project.classHierarchy.allSupertypes(c.thisType).size
-      val className = c.thisType.fqn
+    project.allProjectClassFiles.foreach(classFile => {
+      val supertypes = project.classHierarchy.allSupertypes(classFile.thisType).size
+      val className = classFile.thisType.fqn
       resultList =MetricValue(className,this.analysisName,"",supertypes) :: resultList
     })
 
@@ -51,8 +51,8 @@ class DITMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(String, String, Do
     var dITSum:Double = 0
     var averageDIT:Double = 0.0
 
-    resultList.foreach(l =>{
-      dITSum += l.metricValue
+    resultList.foreach(classMetricValue =>{
+      dITSum += classMetricValue.metricValue
       classCount += 1
     })
 
@@ -60,7 +60,7 @@ class DITMFMAnalysis(jarDir: File) extends MultiFileAnalysis[(String, String, Do
       averageDIT = dITSum/classCount
       if(!initialRound){
 //         log.info(s"averageDIT: $averageDIT, preDIT: $preVersionAverageDIT")
-        difDITBetweenVersions = (averageDIT - preVersionAverageDIT)/preVersionAverageDIT
+        difDITBetweenVersions = (averageDIT - preVersionAverageDIT)*100/preVersionAverageDIT
 //         log.info(s"difCoupling: $difDITBetweenVersions")
       }
     }
